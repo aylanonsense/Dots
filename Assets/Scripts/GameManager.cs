@@ -36,9 +36,9 @@ namespace Dots
 
 		private void OnSelectDot(Dot dot)
 		{
-			Debug.Log($"Selected dot <{dot.column},{dot.row}>");
 			dot.Despawn();
 			dotGrid.ApplyGravity();
+			dotGrid.FillWithDots();
 		}
 	}
 }

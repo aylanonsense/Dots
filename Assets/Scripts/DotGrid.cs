@@ -44,6 +44,21 @@ namespace Dots
 			}
 		}
 
+		public void FillWithDots()
+		{
+			for (int column = 0; column < columns; column++)
+			{
+				for (int row = 0; row < rows; row++)
+				{
+					if (dots[column, row] == null)
+					{
+						// We found a gap in the grid to fill
+						SpawnAndAddDotToGrid(column, row);
+					}
+				}
+			}
+		}
+
 		private void Awake()
 		{
 			dots = new DotEntry[columns, rows];
@@ -55,11 +70,17 @@ namespace Dots
 			{
 				for (int row = 0; row < rows; row++)
 				{
-					Dot dot = dotPool.SpawnDot();
-					dot.colorIndex = Random.Range(0, GameManager.I.dotColors.Length);
-					AddDotToGrid(dot, column, row);
+					SpawnAndAddDotToGrid(column, row);
 				}
 			}
+		}
+
+		private Dot SpawnAndAddDotToGrid(int column, int row)
+		{
+			Dot dot = dotPool.SpawnDot();
+			dot.colorIndex = Random.Range(0, GameManager.I.dotColors.Length);
+			AddDotToGrid(dot, column, row);
+			return dot;
 		}
 
 		private void AddDotToGrid(Dot dot, int column, int row)

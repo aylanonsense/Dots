@@ -41,6 +41,10 @@ namespace Dots
 
 		private void DepositDot(Dot dot) => dot.gameObject.SetActive(false);
 
-		private void DestroyDot(Dot dot) => Destroy(dot.gameObject);
+		private void DestroyDot(Dot dot)
+		{
+			if (dot != null && dot.gameObject != null)
+				Destroy(dot.gameObject);
+		}
 	}
 }

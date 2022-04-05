@@ -38,6 +38,7 @@ namespace Dots
 		{
 			Debug.Log($"Selected dot <{dot.column},{dot.row}>");
 			dot.Despawn();
+			dotGrid.ApplyGravity();
 		}
 	}
 }

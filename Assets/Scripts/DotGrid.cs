@@ -17,6 +17,33 @@ namespace Dots
 
 		private DotEntry[,] dots;
 
+		public void ApplyGravity()
+		{
+			for (int column = 0; column < columns; column++)
+			{
+				for (int row = 0; row < rows; row++)
+				{
+					if (dots[column, row] == null)
+					{
+						// There is a gap--we need to look up the column until we find a dot that can fall down and fill it
+						for (int rowAbove = row + 1; rowAbove < rows; rowAbove++)
+						{
+							if (dots[column, rowAbove] != null)
+							{
+								// We found a dot to fill the gap
+								DotEntry entry = dots[column, rowAbove];
+								dots[column, rowAbove] = null;
+								dots[column, row] = entry;
+								entry.dot.row = row;
+								entry.dot.transform.position = CalculateCellPosition(column, row);
+								break;
+							}
+						}
+					}
+				}
+			}
+		}
+
 		private void Awake()
 		{
 			dots = new DotEntry[columns, rows];

@@ -14,12 +14,12 @@ namespace Dots
 			}
 		}
 
+		private static T instance;
+
 		protected static void ClearInstance()
 		{
 			instance = null;
 		}
-
-		private static T instance;
 
 		protected virtual void OnEnable()
 		{

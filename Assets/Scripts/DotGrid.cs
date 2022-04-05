@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
@@ -63,6 +64,28 @@ namespace Dots
 		{
 			return (dot1.column == dot2.column && (dot1.row == dot2.row - 1 || dot1.row == dot2.row + 1)) ||
 				(dot1.row == dot2.row && (dot1.column == dot2.column - 1 || dot1.column == dot2.column + 1));
+		}
+
+		public void ClearDots(IEnumerable<Dot> dots)
+		{
+			foreach (Dot dot in dots)
+			{
+				dot.Despawn();
+			}
+		}
+
+		public void ClearDotsOfColor(int colorIndex)
+		{
+			for (int column = 0; column < columns; column++)
+			{
+				for (int row = 0; row < rows; row++)
+				{
+					if (dots[column, row] != null && dots[column, row].dot.colorIndex == colorIndex)
+					{
+						dots[column, row].dot.Despawn();
+					}
+				}
+			}
 		}
 
 		private void Awake()

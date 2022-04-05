@@ -19,8 +19,9 @@ namespace Dots
 					line.colorIndex = _colorIndex;
 			}
 		}
+		public List<Dot> dots = new List<Dot>();
+		public HashSet<Dot> uniqueDots = new HashSet<Dot>();
 
-		private List<Dot> dots = new List<Dot>();
 		private List<LineSegment> lines = new List<LineSegment>();
 		private int _colorIndex;
 
@@ -28,6 +29,7 @@ namespace Dots
 		{
 			// Add the dot
 			dots.Add(dot);
+			uniqueDots.Add(dot);
 			// Pin the last line segment's end position to that dot
 			if (lines.Count > 0)
 				lines[lines.Count - 1].endPosition = dot.transform.position;
@@ -45,6 +47,7 @@ namespace Dots
 			if (dots.Count > 0)
 			{
 				dots.RemoveAt(dots.Count - 1);
+				uniqueDots = new HashSet<Dot>(dots);
 				// Despawn the last line segment
 				LineSegment line = lines[lines.Count - 1];
 				lines.RemoveAt(lines.Count - 1);
@@ -56,7 +59,7 @@ namespace Dots
 
 		public bool ContainsDot(Dot dot)
 		{
-			return dots.Contains(dot);
+			return uniqueDots.Contains(dot);
 		}
 
 		public bool ContainsLink(Dot dot1, Dot dot2)
@@ -67,6 +70,20 @@ namespace Dots
 					return true;
 			}
 			return false;
+		}
+
+		public bool HasLoop()
+		{
+			return dots.Count > uniqueDots.Count;
+		}
+
+		public void Clear()
+		{
+			dots.Clear();
+			uniqueDots.Clear();
+			foreach (LineSegment line in lines)
+				line.Despawn();
+			lines.Clear();
 		}
 
 		private void Update()

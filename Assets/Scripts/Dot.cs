@@ -15,10 +15,9 @@ namespace Dots
 			set
 			{
 				_colorIndex = value;
-				sprite.color = color;
+				sprite.color = GameManager.I.dotColors[_colorIndex];
 			}
 		}
-		public Color color => GameManager.I.dotColors[_colorIndex];
 
 		public event Action onSelect;
 		public event Action onHoverStart;

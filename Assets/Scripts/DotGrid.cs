@@ -59,6 +59,12 @@ namespace Dots
 			}
 		}
 
+		public bool AreDotsAdjacent(Dot dot1, Dot dot2)
+		{
+			return (dot1.column == dot2.column && (dot1.row == dot2.row - 1 || dot1.row == dot2.row + 1)) ||
+				(dot1.row == dot2.row && (dot1.column == dot2.column - 1 || dot1.column == dot2.column + 1));
+		}
+
 		private void Awake()
 		{
 			dots = new DotEntry[columns, rows];

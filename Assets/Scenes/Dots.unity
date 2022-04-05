@@ -132,7 +132,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 161439506}
-  - component: {fileID: 161439504}
+  - component: {fileID: 161439507}
   m_Layer: 0
   m_Name: DotPool
   m_TagString: Untagged
@@ -140,19 +140,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!114 &161439504
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 161439503}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ee236cbb8b1eea54fbf3fbc98b5d09a9, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  dotPrefab: {fileID: 3586619803912815008, guid: 8f7f8612b1f247f4d9c3c0770069dc32, type: 3}
 --- !u!4 &161439506
 Transform:
   m_ObjectHideFlags: 0
@@ -168,6 +155,19 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &161439507
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 161439503}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 57fcb3592e30e3c4a9c79536ebf627a5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  prefab: {fileID: 192485545937348859, guid: 8f7f8612b1f247f4d9c3c0770069dc32, type: 3}
 --- !u!1 &519420028
 GameObject:
   m_ObjectHideFlags: 0
@@ -286,63 +286,6 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!1001 &576245447
-PrefabInstance:
-  m_ObjectHideFlags: 0
-  serializedVersion: 2
-  m_Modification:
-    m_TransformParent: {fileID: 0}
-    m_Modifications:
-    - target: {fileID: 1150143939983181557, guid: d8c6418889f17624fb2952efd217bb21, type: 3}
-      propertyPath: m_RootOrder
-      value: 4
-      objectReference: {fileID: 0}
-    - target: {fileID: 1150143939983181557, guid: d8c6418889f17624fb2952efd217bb21, type: 3}
-      propertyPath: m_LocalPosition.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 1150143939983181557, guid: d8c6418889f17624fb2952efd217bb21, type: 3}
-      propertyPath: m_LocalPosition.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 1150143939983181557, guid: d8c6418889f17624fb2952efd217bb21, type: 3}
-      propertyPath: m_LocalPosition.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 1150143939983181557, guid: d8c6418889f17624fb2952efd217bb21, type: 3}
-      propertyPath: m_LocalRotation.w
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 1150143939983181557, guid: d8c6418889f17624fb2952efd217bb21, type: 3}
-      propertyPath: m_LocalRotation.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 1150143939983181557, guid: d8c6418889f17624fb2952efd217bb21, type: 3}
-      propertyPath: m_LocalRotation.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 1150143939983181557, guid: d8c6418889f17624fb2952efd217bb21, type: 3}
-      propertyPath: m_LocalRotation.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 1150143939983181557, guid: d8c6418889f17624fb2952efd217bb21, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 1150143939983181557, guid: d8c6418889f17624fb2952efd217bb21, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 1150143939983181557, guid: d8c6418889f17624fb2952efd217bb21, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 1331767680170156922, guid: d8c6418889f17624fb2952efd217bb21, type: 3}
-      propertyPath: m_Name
-      value: LineSegment
-      objectReference: {fileID: 0}
-    m_RemovedComponents: []
-  m_SourcePrefab: {fileID: 100100000, guid: d8c6418889f17624fb2952efd217bb21, type: 3}
 --- !u!1 &1052844170
 GameObject:
   m_ObjectHideFlags: 0
@@ -372,7 +315,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 74d05ec440be2ea49ad7b3db34ccbf4d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  dotPool: {fileID: 161439504}
+  dotPool: {fileID: 161439507}
   columns: 6
   rows: 6
   spacing: 2.2
@@ -389,19 +332,53 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 3
+  m_RootOrder: 4
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &2133724195 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 2282740832479412497, guid: d8c6418889f17624fb2952efd217bb21, type: 3}
-  m_PrefabInstance: {fileID: 576245447}
+--- !u!1 &1758149371
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1758149373}
+  - component: {fileID: 1758149372}
+  m_Layer: 0
+  m_Name: LineSegmentPool
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1758149372
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1758149371}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: fea47ebbb6a10ec4295b9414218f6bd2, type: 3}
+  m_Script: {fileID: 11500000, guid: 57fcb3592e30e3c4a9c79536ebf627a5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  prefab: {fileID: 1331767680170156922, guid: d8c6418889f17624fb2952efd217bb21, type: 3}
+--- !u!4 &1758149373
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1758149371}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 3
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!4 &1139790345783263598
 Transform:
   m_ObjectHideFlags: 0
@@ -430,7 +407,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   dotGrid: {fileID: 1052844171}
-  lineSegment: {fileID: 2133724195}
   dotColors:
   - {r: 0.92156863, g: 0.3647059, b: 0.27450982, a: 1}
   - {r: 0.5411765, g: 0.7372549, b: 1, a: 1}

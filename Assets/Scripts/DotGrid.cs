@@ -6,7 +6,7 @@ namespace Dots
 {
 	public class DotGrid : MonoBehaviour
 	{
-		[SerializeField] private DotPool dotPool;
+		[SerializeField] private PrefabPool dotPool;
 		[SerializeField] private int columns = 6;
 		[SerializeField] private int rows = 6;
 		[SerializeField] private float spacing = 2.2f;
@@ -77,7 +77,7 @@ namespace Dots
 
 		private Dot SpawnAndAddDotToGrid(int column, int row)
 		{
-			Dot dot = dotPool.SpawnDot();
+			Dot dot = dotPool.Spawn<Dot>();
 			dot.colorIndex = Random.Range(0, GameManager.I.dotColors.Length);
 			AddDotToGrid(dot, column, row);
 			return dot;

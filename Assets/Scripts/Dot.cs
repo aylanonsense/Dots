@@ -3,9 +3,9 @@ using UnityEngine;
 
 namespace Dots
 {
+	[RequireComponent(typeof(PoolableObject))]
 	public class Dot : MonoBehaviour
 	{
-		[HideInInspector] public DotPool pool;
 		[HideInInspector] public DotGrid grid;
 		[HideInInspector] public int column;
 		[HideInInspector] public int row;
@@ -25,23 +25,25 @@ namespace Dots
 		public event Action onHoverEnd;
 		public event Action onDespawn;
 
+		private PoolableObject poolable;
+
 		[SerializeField] private SpriteRenderer sprite;
 		private int _colorIndex;
 
 		public void Despawn()
 		{
 			onDespawn?.Invoke();
-			// Deposit the dot back in the pool if there is one
-			if (pool != null)
-				pool.DespawnDot(this);
-			else
+			if (!poolable.ReturnToPool())
 				Destroy(gameObject);
 		}
 
+		private void Awake()
+		{
+			poolable = GetComponent<PoolableObject>();
+		}
+
 		private void OnMouseDown() => onSelect?.Invoke();
-
 		private void OnMouseEnter() => onHoverStart?.Invoke();
-
 		private void OnMouseExit() => onHoverEnd?.Invoke();
 	}
 }

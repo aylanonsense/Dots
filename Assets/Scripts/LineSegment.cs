@@ -1,7 +1,9 @@
+using System;
 using UnityEngine;
 
 namespace Dots
 {
+	[RequireComponent(typeof(PoolableObject))]
 	public class LineSegment : MonoBehaviour
 	{
 		public Vector3 startPosition
@@ -45,7 +47,27 @@ namespace Dots
 		}
 		public Color color => GameManager.I.dotColors[_colorIndex];
 
+		public event Action onHoverStart;
+		public event Action onHoverEnd;
+		public event Action onDespawn;
+
 		[SerializeField] private SpriteRenderer sprite;
+		private PoolableObject poolable;
 		private int _colorIndex;
+
+		public void Despawn()
+		{
+			onDespawn?.Invoke();
+			if (!poolable.ReturnToPool())
+				Destroy(gameObject);
+		}
+
+		private void Awake()
+		{
+			poolable = GetComponent<PoolableObject>();
+		}
+
+		private void OnMouseEnter() => onHoverStart?.Invoke();
+		private void OnMouseExit() => onHoverEnd?.Invoke();
 	}
 }

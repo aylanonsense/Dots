@@ -19,6 +19,7 @@ namespace Dots
 			base.OnEnable();
 			dotGrid.onSelectDot += OnSelectDot;
 			dotGrid.onHoverDotStart += OnHoverDotStart;
+			dotSelection.onHoverPreviousLineSegment += OnHoverPreviousLineSegment;
 		}
 
 		protected override void OnDisable()
@@ -26,6 +27,7 @@ namespace Dots
 			base.OnDisable();
 			dotGrid.onSelectDot -= OnSelectDot;
 			dotGrid.onHoverDotStart -= OnHoverDotStart;
+			dotSelection.onHoverPreviousLineSegment -= OnHoverPreviousLineSegment;
 		}
 
 		private void Update()
@@ -52,6 +54,11 @@ namespace Dots
 		{
 			if (dotSelection.numDots > 0)
 				ConsiderSelectingDot(dot);
+		}
+
+		private void OnHoverPreviousLineSegment()
+		{
+			DeselectCurrentDot();
 		}
 
 		private void StartNewSelection(Dot dot)
@@ -88,6 +95,11 @@ namespace Dots
 			dotSelection.Clear();
 			dotGrid.ApplyGravity();
 			dotGrid.FillWithDots();
+		}
+
+		private void DeselectCurrentDot()
+		{
+			dotSelection.RemoveMostRecentlyAddedDot();
 		}
 
 		private void DeselectDots()

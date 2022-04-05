@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -22,6 +23,8 @@ namespace Dots
 		public List<Dot> dots = new List<Dot>();
 		public HashSet<Dot> uniqueDots = new HashSet<Dot>();
 
+		public event Action onHoverPreviousLineSegment;
+
 		private List<LineSegment> lines = new List<LineSegment>();
 		private int _colorIndex;
 
@@ -38,7 +41,11 @@ namespace Dots
 			line.transform.SetParent(transform);
 			line.colorIndex = colorIndex;
 			line.startPosition = dot.transform.position;
+			if (lines.Count > 1)
+				lines[lines.Count - 2].onHoverStart -= OnHoverPreviousLineSegment;
 			lines.Add(line);
+			if (lines.Count > 1)
+				lines[lines.Count - 2].onHoverStart += OnHoverPreviousLineSegment;
 			MoveLastLineSegmentToMouse();
 		}
 
@@ -50,8 +57,12 @@ namespace Dots
 				uniqueDots = new HashSet<Dot>(dots);
 				// Despawn the last line segment
 				LineSegment line = lines[lines.Count - 1];
+				if (lines.Count > 1)
+					lines[lines.Count - 2].onHoverStart -= OnHoverPreviousLineSegment;
 				lines.RemoveAt(lines.Count - 1);
 				line.Despawn();
+				if (lines.Count > 1)
+					lines[lines.Count - 2].onHoverStart += OnHoverPreviousLineSegment;
 				// Move the new last line segment to the mouse
 				MoveLastLineSegmentToMouse();
 			}
@@ -81,6 +92,8 @@ namespace Dots
 		{
 			dots.Clear();
 			uniqueDots.Clear();
+			if (lines.Count > 1)
+				lines[lines.Count - 2].onHoverStart -= OnHoverPreviousLineSegment;
 			foreach (LineSegment line in lines)
 				line.Despawn();
 			lines.Clear();
@@ -98,6 +111,11 @@ namespace Dots
 				Vector2 mousePosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
 				lines[lines.Count - 1].endPosition = mousePosition;
 			}
+		}
+
+		private void OnHoverPreviousLineSegment()
+		{
+			onHoverPreviousLineSegment?.Invoke();
 		}
 	}
 }

@@ -1,5 +1,6 @@
 using System;
 using UnityEngine;
+using Random = UnityEngine.Random;
 
 namespace Dots
 {
@@ -27,7 +28,9 @@ namespace Dots
 			{
 				for (int row = 0; row < rows; row++)
 				{
-					AddDotToGrid(dotPool.SpawnDot(), column, row);
+					Dot dot = dotPool.SpawnDot();
+					dot.colorIndex = Random.Range(0, GameManager.I.dotColors.Length);
+					AddDotToGrid(dot, column, row);
 				}
 			}
 		}

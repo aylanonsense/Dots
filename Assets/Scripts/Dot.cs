@@ -5,15 +5,28 @@ namespace Dots
 {
 	public class Dot : MonoBehaviour
 	{
-		public DotPool pool;
-		public DotGrid grid;
-		public int column;
-		public int row;
+		[HideInInspector] public DotPool pool;
+		[HideInInspector] public DotGrid grid;
+		[HideInInspector] public int column;
+		[HideInInspector] public int row;
+		public int colorIndex
+		{
+			get => _colorIndex;
+			set
+			{
+				_colorIndex = value;
+				dotSprite.color = color;
+			}
+		}
+		public Color color => GameManager.I.dotColors[_colorIndex];
 
 		public event Action onSelect;
 		public event Action onHoverStart;
 		public event Action onHoverEnd;
 		public event Action onDespawn;
+
+		[SerializeField] private SpriteRenderer dotSprite;
+		private int _colorIndex;
 
 		public void Despawn()
 		{

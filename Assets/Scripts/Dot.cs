@@ -15,7 +15,7 @@ namespace Dots
 			set
 			{
 				_colorIndex = value;
-				dotSprite.color = color;
+				sprite.color = color;
 			}
 		}
 		public Color color => GameManager.I.dotColors[_colorIndex];
@@ -25,7 +25,7 @@ namespace Dots
 		public event Action onHoverEnd;
 		public event Action onDespawn;
 
-		[SerializeField] private SpriteRenderer dotSprite;
+		[SerializeField] private SpriteRenderer sprite;
 		private int _colorIndex;
 
 		public void Despawn()

@@ -40,7 +40,7 @@ namespace Dots
 			int prevNumLoops = numLoops;
 			// Pin the previous line to this newly-added dot
 			if (lines.Count > 0)
-				lines[lines.Count - 1].endPosition = dot.transform.position;
+				lines[lines.Count - 1].endPosition = dot.transform.position + lineOffset;
 			// Add the dot
 			dots.Add(dot);
 			uniqueDots.Add(dot);

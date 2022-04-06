@@ -4,6 +4,7 @@ using UnityEngine;
 
 namespace Dots
 {
+	// Keeps track of dots that are selected and draws lines between them, dots can be Pushed or Popped
 	public class DotSelection : MonoBehaviour
 	{
 		public List<Dot> dots { get; private set; } = new List<Dot>();
@@ -31,7 +32,7 @@ namespace Dots
 		public event Action onUnformLoop;
 
 		[SerializeField] private PrefabPool lineSegmentPool;
-		[SerializeField] private Vector3 lineOffset = new Vector3(0f, 0f, 1f);
+		[SerializeField] private Vector3 lineOffset = new Vector3(0f, 0f, 1f); // Just so we have a way to adjust collider priority by moving lines further into the background
 		private int _colorIndex;
 
 		public void Push(Dot dot)
@@ -59,12 +60,14 @@ namespace Dots
 			if (dots.Count > 0)
 			{
 				int prevNumLoops = numLoops;
+				// Remove the most recent dot
 				dots.RemoveAt(dots.Count - 1);
 				uniqueDots = new HashSet<Dot>(dots);
 				// Despawn the last line segment
 				LineSegment line = lines[lines.Count - 1];
 				lines.RemoveAt(lines.Count - 1);
 				line.Despawn();
+				// Attach the new last line segment to the mouse
 				if (lines.Count > 0)
 					lines[lines.Count - 1].endPosition = GetMousePosition() + lineOffset;
 				if (numLoops < prevNumLoops)
@@ -77,6 +80,7 @@ namespace Dots
 			return uniqueDots.Contains(dot);
 		}
 
+		// Returns true if the DotSelection already contains a link DIRECTLY between two given dots
 		public bool ContainsLink(Dot dot1, Dot dot2)
 		{
 			for (int i = 1; i < dots.Count; i++)

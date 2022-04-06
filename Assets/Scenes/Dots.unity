@@ -395,6 +395,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   lineSegmentPool: {fileID: 1758149372}
+  lineZOffset: 1
+  dots: []
 --- !u!1 &1758149371
 GameObject:
   m_ObjectHideFlags: 0
@@ -467,8 +469,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fae5c4402c17db5449de217327cc51d9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  dotGrid: {fileID: 1052844171}
   dotSelection: {fileID: 1419711380}
+  dotGrid: {fileID: 1052844171}
+  minSelectionLength: 2
   dotColors:
   - {r: 0.92156863, g: 0.3647059, b: 0.27450982, a: 1}
   - {r: 0.5411765, g: 0.7372549, b: 1, a: 1}

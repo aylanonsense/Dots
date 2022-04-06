@@ -6,7 +6,8 @@ namespace Dots
 {
 	public class DotSelection : MonoBehaviour
 	{
-		[SerializeField] private PrefabPool lineSegmentPool;
+		public List<Dot> dots { get; private set; } = new List<Dot>();
+		public HashSet<Dot> uniqueDots { get; private set; } = new HashSet<Dot>();
 		public Dot currentDot => dots.Count > 0 ? dots[dots.Count - 1] : null;
 		public Dot previousDot => dots.Count > 1 ? dots[dots.Count - 2] : null;
 		public int numDots => dots.Count;
@@ -20,11 +21,11 @@ namespace Dots
 					line.colorIndex = _colorIndex;
 			}
 		}
-		public List<Dot> dots = new List<Dot>();
-		public HashSet<Dot> uniqueDots = new HashSet<Dot>();
 
 		public event Action onHoverPreviousLineSegment;
 
+		[SerializeField] private PrefabPool lineSegmentPool;
+		[SerializeField] private float lineZOffset = 1f;
 		private List<LineSegment> lines = new List<LineSegment>();
 		private int _colorIndex;
 
@@ -35,12 +36,12 @@ namespace Dots
 			uniqueDots.Add(dot);
 			// Pin the last line segment's end position to that dot
 			if (lines.Count > 0)
-				lines[lines.Count - 1].endPosition = dot.transform.position;
+				lines[lines.Count - 1].endPosition = new Vector3(dot.transform.position.x, dot.transform.position.y, lineZOffset);
 			// Create a new line segment with a start position pinned to that dot
 			LineSegment line = lineSegmentPool.Spawn<LineSegment>();
 			line.transform.SetParent(transform);
 			line.colorIndex = colorIndex;
-			line.startPosition = dot.transform.position;
+			line.startPosition = new Vector3(dot.transform.position.x, dot.transform.position.y, lineZOffset);
 			if (lines.Count > 1)
 				lines[lines.Count - 2].onHoverStart -= OnHoverPreviousLineSegment;
 			lines.Add(line);
@@ -109,7 +110,7 @@ namespace Dots
 			if (lines.Count > 0)
 			{
 				Vector2 mousePosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-				lines[lines.Count - 1].endPosition = mousePosition;
+				lines[lines.Count - 1].endPosition = new Vector3(mousePosition.x, mousePosition.y, lineZOffset);
 			}
 		}
 

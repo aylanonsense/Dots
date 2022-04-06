@@ -34,6 +34,7 @@ namespace Dots
 					{
 						// We found a gap in the grid, so spawn a dot to fill it
 						Dot dot = dotPool.Spawn<Dot>();
+						dot.OnSpawn();
 						dot.colorIndex = Random.Range(0, GameManager.I.dotColors.Length);
 						AddDotToGrid(dot, column, row, fallIntoPosition);
 					}

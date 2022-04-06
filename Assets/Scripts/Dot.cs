@@ -3,6 +3,7 @@ using UnityEngine;
 namespace Dots
 {
 	[RequireComponent(typeof(Animator))]
+	[RequireComponent(typeof(Collider))]
 	[RequireComponent(typeof(PoolableObject))]
 	public class Dot : MonoBehaviour
 	{
@@ -24,6 +25,7 @@ namespace Dots
 		}
 
 		private Animator animator;
+		private new Collider2D collider;
 		private PoolableObject poolable;
 
 		[SerializeField] private SpriteRenderer sprite;
@@ -35,6 +37,11 @@ namespace Dots
 		private float fallTime = 0f;
 		private float fallDuration = 0f;
 		private int _colorIndex;
+
+		public void OnSpawn()
+		{
+			collider.enabled = true;
+		}
 
 		public void FallToPosition(Vector3 position, float duration = 0.5f)
 		{
@@ -50,20 +57,22 @@ namespace Dots
 			animator.SetTrigger(PulseHash);
 		}
 
-		public void ShrinkAndDespawn()
-		{
-			animator.SetTrigger(ShrinkHash);
-		}
-
 		public void Despawn()
 		{
 			if (!poolable.ReturnToPool())
 				Destroy(gameObject);
 		}
 
+		public void ShrinkAndDespawn()
+		{
+			collider.enabled = false;
+			animator.SetTrigger(ShrinkHash);
+		}
+
 		private void Awake()
 		{
 			animator = GetComponent<Animator>();
+			collider = GetComponent<Collider2D>();
 			poolable = GetComponent<PoolableObject>();
 		}
 

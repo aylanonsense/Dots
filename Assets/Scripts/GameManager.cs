@@ -61,7 +61,7 @@ namespace Dots
 							SelectDot(dot);
 						}
 						// If the player hovers over a dot while the mouse button is down, we either select or deselect it
-						else
+						else if (dotSelection.numDots > 0)
 						{
 							ConsiderSelectingOrDeselectingDot(dot);
 						}

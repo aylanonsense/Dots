@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.UI;
 
 namespace Dots
 {
@@ -10,9 +11,11 @@ namespace Dots
 
 		[SerializeField] private DotSelection dotSelection;
 		[SerializeField] private DotGrid dotGrid;
+		[SerializeField] private Image background;
 
 		public int minSelectionLength = 2;
 		public Color[] dotColors;
+		public Color[] backgroundColors;
 
 		protected override void OnEnable()
 		{
@@ -86,9 +89,14 @@ namespace Dots
 				bool didHaveLoop = dotSelection.hasLoop;
 				dotSelection.AddDot(dot);
 				if (!didHaveLoop && dotSelection.hasLoop)
+				{
+					background.color = backgroundColors[dotSelection.colorIndex];
 					PulseDotsOfColor(dotSelection.colorIndex);
+				}
 				else
+				{
 					dot.Pulse();
+				}
 			}
 		}
 
@@ -105,6 +113,7 @@ namespace Dots
 				foreach (Dot dot in dotSelection.uniqueDots)
 					dot.Despawn();
 			}
+			background.color = Color.white;
 			dotSelection.Clear();
 			dotGrid.ApplyGravity();
 			dotGrid.FillWithDots();
@@ -113,11 +122,14 @@ namespace Dots
 		private void DeselectCurrentDot()
 		{
 			dotSelection.RemoveMostRecentlyAddedDot();
+			if (!dotSelection.hasLoop)
+				background.color = Color.white;
 		}
 
 		private void DeselectDots()
 		{
 			dotSelection.Clear();
+			background.color = Color.white;
 		}
 
 		private void PulseDotsOfColor(int colorIndex)

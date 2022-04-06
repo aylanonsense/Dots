@@ -1,4 +1,3 @@
-using System;
 using UnityEngine;
 
 namespace Dots
@@ -46,17 +45,12 @@ namespace Dots
 			}
 		}
 
-		public event Action onHoverStart;
-		public event Action onHoverEnd;
-		public event Action onDespawn;
-
 		[SerializeField] private SpriteRenderer sprite;
 		private PoolableObject poolable;
 		private int _colorIndex;
 
 		public void Despawn()
 		{
-			onDespawn?.Invoke();
 			if (!poolable.ReturnToPool())
 				Destroy(gameObject);
 		}
@@ -65,8 +59,5 @@ namespace Dots
 		{
 			poolable = GetComponent<PoolableObject>();
 		}
-
-		private void OnMouseEnter() => onHoverStart?.Invoke();
-		private void OnMouseExit() => onHoverEnd?.Invoke();
 	}
 }

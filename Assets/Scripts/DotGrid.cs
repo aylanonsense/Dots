@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using UnityEngine;
 using Random = UnityEngine.Random;
@@ -12,21 +11,34 @@ namespace Dots
 		public int rows = 6;
 		public float spacing = 2.2f;
 
-		public event Action<Dot> onSelectDot;
-		public event Action<Dot> onHoverDotStart;
-		public event Action<Dot> onHoverDotEnd;
-
-		private DotEntry[,] dots;
+		private Dot[,] dots;
 
 		public Dot GetDot(int column, int row)
 		{
-			return dots[column, row].dot;
+			return dots[column, row];
 		}
 
 		public bool AreDotsAdjacent(Dot dot1, Dot dot2)
 		{
 			return (dot1.column == dot2.column && (dot1.row == dot2.row - 1 || dot1.row == dot2.row + 1)) ||
 				(dot1.row == dot2.row && (dot1.column == dot2.column - 1 || dot1.column == dot2.column + 1));
+		}
+
+		public void FillWithDots(bool fallIntoPosition = true)
+		{
+			for (int column = 0; column < columns; column++)
+			{
+				for (int row = 0; row < rows; row++)
+				{
+					if (dots[column, row] == null)
+					{
+						// We found a gap in the grid, so spawn a dot to fill it
+						Dot dot = dotPool.Spawn<Dot>();
+						dot.colorIndex = Random.Range(0, GameManager.I.dotColors.Length);
+						AddDotToGrid(dot, column, row, fallIntoPosition);
+					}
+				}
+			}
 		}
 
 		public void ApplyGravity()
@@ -46,11 +58,11 @@ namespace Dots
 							if (dots[column, rowAbove] != null)
 							{
 								// We found a dot to fill the gap
-								DotEntry entry = dots[column, rowAbove];
+								Dot dot = dots[column, rowAbove];
 								dots[column, rowAbove] = null;
-								dots[column, row] = entry;
-								entry.dot.row = row;
-								entry.dot.FallToPosition(CalculateCellPosition(column, row), 0.35f + ((float) (row - firstRowWithGap)) * 0.12f);
+								dots[column, row] = dot;
+								dot.row = row;
+								dot.FallToPosition(CalculateCellPosition(column, row), 0.35f + ((float) (row - firstRowWithGap)) * 0.12f);
 								break;
 							}
 						}
@@ -59,96 +71,60 @@ namespace Dots
 			}
 		}
 
-		public void FillWithDots()
+		public void ClearDot(Dot dot)
 		{
-			for (int column = 0; column < columns; column++)
-			{
-				for (int row = 0; row < rows; row++)
-				{
-					if (dots[column, row] == null)
-					{
-						// We found a gap in the grid to fill
-						SpawnAndAddDotToGrid(column, row);
-					}
-				}
-			}
+			RemoveDotFromGrid(dot);
+			dot.ShrinkAndDespawn();
 		}
 
 		public void ClearDots(IEnumerable<Dot> dots)
 		{
 			foreach (Dot dot in dots)
-			{
-				dot.Despawn();
-			}
+				ClearDot(dot);
 		}
 
-		public void AddDotToGrid(Dot dot, int column, int row)
-		{
-			dot.grid = this;
-			dot.column = column;
-			dot.row = row;
-			dot.transform.SetParent(transform);
-			dot.transform.position = CalculateCellPosition(column, row + 6);
-			dot.FallToPosition(CalculateCellPosition(column, row), 0.4f + row * 0.08f);
-			// Declare event handlers so that we can properly unbind them later
-			//  (since we need to create a closure around the dot variable)
-			Action onSelectHandler = () => onSelectDot?.Invoke(dot);
-			Action onHoverStartHandler = () => onHoverDotStart?.Invoke(dot);
-			Action onHoverEndHandler = () => onHoverDotEnd?.Invoke(dot);
-			Action onDespawnHandler = () => RemoveDotFromGrid(dot);
-			// Bind events
-			dot.onSelect += onSelectHandler;
-			dot.onHoverStart += onHoverStartHandler;
-			dot.onHoverEnd += onHoverEndHandler;
-			dot.onDespawn += onDespawnHandler;
-			// Store the dot + event handlers in the grid
-			dots[column, row] = new DotEntry
-			{
-				dot = dot,
-				onSelectHandler = onSelectHandler,
-				onHoverStartHandler = onHoverStartHandler,
-				onHoverEndHandler = onHoverEndHandler,
-				onDespawnHandler = onDespawnHandler
-			};
-		}
-
-		public void RemoveDotFromGrid(Dot dot)
-		{
-			// Unbind events
-			DotEntry handlers = dots[dot.column, dot.row];
-			dot.onSelect -= handlers.onSelectHandler;
-			dot.onHoverStart -= handlers.onHoverStartHandler;
-			dot.onHoverEnd -= handlers.onHoverEndHandler;
-			dot.onDespawn -= handlers.onDespawnHandler;
-			// Remove the dot from the grid
-			dots[dot.column, dot.row] = null;
-			dot.grid = null;
-			dot.column = -1;
-			dot.row = -1;
-		}
-
-		private void Awake()
-		{
-			dots = new DotEntry[columns, rows];
-		}
-
-		private void Start()
+		public void ClearDotsOfColor(int colorIndex)
 		{
 			for (int column = 0; column < columns; column++)
 			{
 				for (int row = 0; row < rows; row++)
 				{
-					SpawnAndAddDotToGrid(column, row);
+					Dot dot = dots[column, row];
+					if (dot != null && dot.colorIndex == colorIndex)
+						ClearDot(dot);
 				}
 			}
 		}
 
-		private Dot SpawnAndAddDotToGrid(int column, int row)
+		private void Awake()
 		{
-			Dot dot = dotPool.Spawn<Dot>();
-			dot.colorIndex = Random.Range(0, GameManager.I.dotColors.Length);
-			AddDotToGrid(dot, column, row);
-			return dot;
+			dots = new Dot[columns, rows];
+		}
+
+		private void AddDotToGrid(Dot dot, int column, int row, bool fallIntoPosition = true)
+		{
+			dot.grid = this;
+			dot.column = column;
+			dot.row = row;
+			dot.transform.SetParent(transform);
+			if (fallIntoPosition)
+			{
+				dot.transform.position = CalculateCellPosition(column, row + 6);
+				dot.FallToPosition(CalculateCellPosition(column, row), 0.4f + row * 0.08f);
+			}
+			else
+			{
+				dot.transform.position = CalculateCellPosition(column, row);
+			}
+			dots[column, row] = dot;
+		}
+
+		private void RemoveDotFromGrid(Dot dot)
+		{
+			dots[dot.column, dot.row] = null;
+			dot.grid = null;
+			dot.column = -1;
+			dot.row = -1;
 		}
 
 		private Vector2 CalculateCellPosition(int column, int row)
@@ -156,15 +132,6 @@ namespace Dots
 			return new Vector2(
 				spacing * (0.5f + (float) column - ((float) columns) / 2f),
 				spacing * (0.5f + (float) row - ((float) rows) / 2f));
-		}
-
-		private class DotEntry
-		{
-			public Dot dot;
-			public Action onSelectHandler;
-			public Action onHoverStartHandler;
-			public Action onHoverEndHandler;
-			public Action onDespawnHandler;
 		}
 	}
 }

@@ -8,8 +8,11 @@ namespace Dots
 	{
 		public List<Dot> dots { get; private set; } = new List<Dot>();
 		public HashSet<Dot> uniqueDots { get; private set; } = new HashSet<Dot>();
+		public List<LineSegment> lines { get; private set; } = new List<LineSegment>();
 		public Dot currentDot => dots.Count > 0 ? dots[dots.Count - 1] : null;
 		public Dot previousDot => dots.Count > 1 ? dots[dots.Count - 2] : null;
+		public LineSegment currentLineSegment => lines.Count > 0 ? lines[lines.Count - 1] : null;
+		public LineSegment previousLineSegment => lines.Count > 1 ? lines[lines.Count - 2] : null;
 		public int numDots => dots.Count;
 		public bool hasLoop => dots.Count > uniqueDots.Count;
 		public int colorIndex
@@ -22,55 +25,55 @@ namespace Dots
 					line.colorIndex = _colorIndex;
 			}
 		}
+		public int minValidSelectionLength = 2;
 
-		public event Action onHoverPreviousLineSegment;
+		public event Action onFormLoop;
+		public event Action onUnformLoop;
 
 		[SerializeField] private PrefabPool lineSegmentPool;
-		[SerializeField] private float lineZOffset = 1f;
-		private List<LineSegment> lines = new List<LineSegment>();
+		[SerializeField] private Vector3 lineOffset = new Vector3(0f, 0f, 1f);
 		private int _colorIndex;
 
-		public void AddDot(Dot dot)
+		public void Push(Dot dot)
 		{
+			bool didHaveLoop = hasLoop;
+			// Pin the previous line to this newly-added dot
+			if (lines.Count > 0)
+				lines[lines.Count - 1].endPosition = dot.transform.position;
 			// Add the dot
 			dots.Add(dot);
 			uniqueDots.Add(dot);
-			// Pin the last line segment's end position to that dot
-			if (lines.Count > 0)
-				lines[lines.Count - 1].endPosition = new Vector3(dot.transform.position.x, dot.transform.position.y, lineZOffset);
-			// Create a new line segment with a start position pinned to that dot
+			// Create a new line segment
 			LineSegment line = lineSegmentPool.Spawn<LineSegment>();
 			line.transform.SetParent(transform);
 			line.colorIndex = colorIndex;
-			line.startPosition = new Vector3(dot.transform.position.x, dot.transform.position.y, lineZOffset);
-			if (lines.Count > 1)
-				lines[lines.Count - 2].onHoverStart -= OnHoverPreviousLineSegment;
+			line.startPosition = dot.transform.position + lineOffset;
+			line.endPosition = GetMousePosition() + lineOffset;
 			lines.Add(line);
-			if (lines.Count > 1)
-				lines[lines.Count - 2].onHoverStart += OnHoverPreviousLineSegment;
-			MoveLastLineSegmentToMouse();
+			if (!didHaveLoop && hasLoop)
+				onFormLoop?.Invoke();
 		}
 
-		public void RemoveMostRecentlyAddedDot()
+		public void Pop()
 		{
 			if (dots.Count > 0)
 			{
+				bool didHaveLoop = hasLoop;
 				dots.RemoveAt(dots.Count - 1);
 				uniqueDots = new HashSet<Dot>(dots);
 				// Despawn the last line segment
 				LineSegment line = lines[lines.Count - 1];
-				if (lines.Count > 1)
-					lines[lines.Count - 2].onHoverStart -= OnHoverPreviousLineSegment;
 				lines.RemoveAt(lines.Count - 1);
 				line.Despawn();
-				if (lines.Count > 1)
-					lines[lines.Count - 2].onHoverStart += OnHoverPreviousLineSegment;
+				if (lines.Count > 0)
+					lines[lines.Count - 1].endPosition = GetMousePosition() + lineOffset;
 				// Move the new last line segment to the mouse
-				MoveLastLineSegmentToMouse();
+				if (didHaveLoop && !hasLoop)
+					onUnformLoop?.Invoke();
 			}
 		}
 
-		public bool ContainsDot(Dot dot)
+		public bool Contains(Dot dot)
 		{
 			return uniqueDots.Contains(dot);
 		}
@@ -87,32 +90,40 @@ namespace Dots
 
 		public void Clear()
 		{
-			dots.Clear();
-			uniqueDots.Clear();
-			if (lines.Count > 1)
-				lines[lines.Count - 2].onHoverStart -= OnHoverPreviousLineSegment;
+			bool didHaveLoop = hasLoop;
 			foreach (LineSegment line in lines)
 				line.Despawn();
+			dots.Clear();
+			uniqueDots.Clear();
 			lines.Clear();
+			if (didHaveLoop)
+				onUnformLoop?.Invoke();
 		}
 
 		private void Update()
 		{
-			MoveLastLineSegmentToMouse();
-		}
-
-		private void MoveLastLineSegmentToMouse()
-		{
-			if (lines.Count > 0)
+			// Move the start and end positions of all lines to the positions of the dots
+			//  (dots are mostly stationary so we don't ~necessarily~ need to do this every frame,
+			//  but it is possible for the player to select lines that are in motion, so we do it)
+			for (int i = 0; i < lines.Count; i++)
 			{
-				Vector2 mousePosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-				lines[lines.Count - 1].endPosition = new Vector3(mousePosition.x, mousePosition.y, lineZOffset);
+				lines[i].startPosition = dots[i].transform.position + lineOffset;
+				if (dots.Count > i + 1)
+				{
+					lines[i].endPosition = dots[i + 1].transform.position + lineOffset;
+				}
+				else
+				{
+					// The last line is pinned to the mouse
+					lines[i].endPosition = GetMousePosition() + lineOffset;
+				}
 			}
 		}
 
-		private void OnHoverPreviousLineSegment()
+		private Vector3 GetMousePosition()
 		{
-			onHoverPreviousLineSegment?.Invoke();
+			Vector3 mousePosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+			return new Vector3(mousePosition.x, mousePosition.y, 0f);
 		}
 	}
 }

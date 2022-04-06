@@ -1,4 +1,3 @@
-using System;
 using UnityEngine;
 
 namespace Dots
@@ -23,11 +22,6 @@ namespace Dots
 				pulseSprite.color = GameManager.I.dotColors[_colorIndex];
 			}
 		}
-
-		public event Action onSelect;
-		public event Action onHoverStart;
-		public event Action onHoverEnd;
-		public event Action onDespawn;
 
 		private Animator animator;
 		private PoolableObject poolable;
@@ -63,7 +57,6 @@ namespace Dots
 
 		public void Despawn()
 		{
-			onDespawn?.Invoke();
 			if (!poolable.ReturnToPool())
 				Destroy(gameObject);
 		}
@@ -90,9 +83,5 @@ namespace Dots
 				}
 			}
 		}
-
-		private void OnMouseDown() => onSelect?.Invoke();
-		private void OnMouseEnter() => onHoverStart?.Invoke();
-		private void OnMouseExit() => onHoverEnd?.Invoke();
 	}
 }

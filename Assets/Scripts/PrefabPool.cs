@@ -33,8 +33,7 @@ namespace Dots
 		private GameObject CreateInstance()
 		{
 			GameObject instance = Instantiate(prefab);
-			PoolableObject poolable = instance.GetComponent<PoolableObject>();
-			if (poolable != null)
+			if (instance.TryGetComponent<PoolableObject>(out PoolableObject poolable))
 				poolable.pool = this;
 			return instance;
 		}

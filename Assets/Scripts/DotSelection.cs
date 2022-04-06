@@ -14,7 +14,7 @@ namespace Dots
 		public LineSegment currentLineSegment => lines.Count > 0 ? lines[lines.Count - 1] : null;
 		public LineSegment previousLineSegment => lines.Count > 1 ? lines[lines.Count - 2] : null;
 		public int numDots => dots.Count;
-		public bool hasLoop => dots.Count > uniqueDots.Count;
+		public int numLoops => dots.Count - uniqueDots.Count;
 		public int colorIndex
 		{
 			get => _colorIndex;
@@ -36,7 +36,7 @@ namespace Dots
 
 		public void Push(Dot dot)
 		{
-			bool didHaveLoop = hasLoop;
+			int prevNumLoops = numLoops;
 			// Pin the previous line to this newly-added dot
 			if (lines.Count > 0)
 				lines[lines.Count - 1].endPosition = dot.transform.position;
@@ -50,7 +50,7 @@ namespace Dots
 			line.startPosition = dot.transform.position + lineOffset;
 			line.endPosition = GetMousePosition() + lineOffset;
 			lines.Add(line);
-			if (!didHaveLoop && hasLoop)
+			if (numLoops > prevNumLoops)
 				onFormLoop?.Invoke();
 		}
 
@@ -58,7 +58,7 @@ namespace Dots
 		{
 			if (dots.Count > 0)
 			{
-				bool didHaveLoop = hasLoop;
+				int prevNumLoops = numLoops;
 				dots.RemoveAt(dots.Count - 1);
 				uniqueDots = new HashSet<Dot>(dots);
 				// Despawn the last line segment
@@ -67,8 +67,7 @@ namespace Dots
 				line.Despawn();
 				if (lines.Count > 0)
 					lines[lines.Count - 1].endPosition = GetMousePosition() + lineOffset;
-				// Move the new last line segment to the mouse
-				if (didHaveLoop && !hasLoop)
+				if (numLoops < prevNumLoops)
 					onUnformLoop?.Invoke();
 			}
 		}
@@ -90,13 +89,13 @@ namespace Dots
 
 		public void Clear()
 		{
-			bool didHaveLoop = hasLoop;
+			int prevNumLoops = numLoops;
 			foreach (LineSegment line in lines)
 				line.Despawn();
 			dots.Clear();
 			uniqueDots.Clear();
 			lines.Clear();
-			if (didHaveLoop)
+			if (numLoops < prevNumLoops)
 				onUnformLoop?.Invoke();
 		}
 

@@ -3,6 +3,7 @@ using UnityEngine.UI;
 
 namespace Dots
 {
+	[RequireComponent(typeof(AudioSource))]
 	public class GameManager : SingletonMonoBehaviour<GameManager>
 	{
 		// Manually reset static fields since domain reloading is turned off
@@ -13,9 +14,16 @@ namespace Dots
 		[SerializeField] private DotGrid dotGrid;
 		[SerializeField] private Image background;
 		private Color defaultBackgroundColor;
+		private AudioSource audioSource;
 
 		public Color[] dotColors;
 		public Color[] backgroundColors;
+		public AudioClip[] notes;
+
+		private void Awake()
+		{
+			audioSource = GetComponent<AudioSource>();
+		}
 
 		private void Start()
 		{
@@ -80,14 +88,21 @@ namespace Dots
 
 		private void SelectDot(Dot dot)
 		{
+			int prevNumLoops = dotSelection.numLoops;
 			dotSelection.Push(dot);
 			dotSelection.colorIndex = dot.colorIndex;
 			dot.Pulse();
+			if (dotSelection.numLoops > prevNumLoops)
+				PlayChord(dotSelection.numDots - 1);
+			else
+				PlayNote(dotSelection.numDots - 1);
 		}
 
 		private void DeselectMostRecentDot()
 		{
 			dotSelection.Pop();
+			if (dotSelection.numDots > 0)
+				PlayNote(dotSelection.numDots - 1);
 		}
 
 		private void DeselectAllDots()
@@ -116,7 +131,7 @@ namespace Dots
 			if (dotSelection.numDots >= dotSelection.minValidSelectionLength)
 			{
 				// Our selection contains a loop, so clear all dots of the same color in the grid
-				if (dotSelection.hasLoop)
+				if (dotSelection.numLoops > 0)
 					dotGrid.ClearDotsOfColor(dotSelection.colorIndex);
 				// Just clear the selected dots
 				else
@@ -149,6 +164,19 @@ namespace Dots
 		private void OnDeselectDotLoop()
 		{
 			background.color = defaultBackgroundColor;
+		}
+
+		private void PlayNote(int noteNumber)
+		{
+			audioSource.PlayOneShot(notes[Mathf.Clamp(noteNumber, 0, notes.Length - 3)]); // -3 because we want two notes above for chords
+		}
+
+		private void PlayChord(int rootNoteNumber)
+		{
+			int clampedRootNoteNumber = Mathf.Clamp(rootNoteNumber, 0, notes.Length - 3);
+			audioSource.PlayOneShot(notes[clampedRootNoteNumber]);
+			audioSource.PlayOneShot(notes[clampedRootNoteNumber + 1]);
+			audioSource.PlayOneShot(notes[clampedRootNoteNumber + 2]);
 		}
 	}
 }

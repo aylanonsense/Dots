@@ -34,7 +34,22 @@ namespace Dots
 
 		[SerializeField] private SpriteRenderer sprite;
 		[SerializeField] private SpriteRenderer pulseSprite;
+		[SerializeField] private AnimationCurve fallCurve;
+		private bool isFalling = false;
+		private Vector3 fallStartPosition;
+		private Vector3 fallEndPosition;
+		private float fallTime = 0f;
+		private float fallDuration = 0f;
 		private int _colorIndex;
+
+		public void FallToPosition(Vector3 position, float duration = 0.5f)
+		{
+			isFalling = true;
+			fallStartPosition = transform.position;
+			fallEndPosition = position;
+			fallTime = 0f;
+			fallDuration = duration;
+		}
 
 		public void Pulse()
 		{
@@ -57,6 +72,23 @@ namespace Dots
 		{
 			animator = GetComponent<Animator>();
 			poolable = GetComponent<PoolableObject>();
+		}
+
+		private void Update()
+		{
+			if (isFalling)
+			{
+				fallTime += Time.deltaTime;
+				if (fallTime >= fallDuration)
+				{
+					isFalling = false;
+					transform.position = fallEndPosition;
+				}
+				else
+				{
+					transform.position =  Vector3.Lerp(fallStartPosition, fallEndPosition, 1f - fallCurve.Evaluate(fallTime / fallDuration));
+				}
+			}
 		}
 
 		private void OnMouseDown() => onSelect?.Invoke();

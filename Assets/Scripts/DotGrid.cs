@@ -31,12 +31,15 @@ namespace Dots
 
 		public void ApplyGravity()
 		{
-			for (int column = 0; column < columns; column++)
+			int firstRowWithGap = -1;
+			for (int row = 0; row < rows; row++)
 			{
-				for (int row = 0; row < rows; row++)
+				for (int column = 0; column < columns; column++)
 				{
 					if (dots[column, row] == null)
 					{
+						if (firstRowWithGap == -1)
+							firstRowWithGap = row;
 						// There is a gap--we need to look up the column until we find a dot that can fall down and fill it
 						for (int rowAbove = row + 1; rowAbove < rows; rowAbove++)
 						{
@@ -47,7 +50,7 @@ namespace Dots
 								dots[column, rowAbove] = null;
 								dots[column, row] = entry;
 								entry.dot.row = row;
-								entry.dot.transform.position = CalculateCellPosition(column, row);
+								entry.dot.FallToPosition(CalculateCellPosition(column, row), 0.35f + ((float) (row - firstRowWithGap)) * 0.12f);
 								break;
 							}
 						}
@@ -85,7 +88,8 @@ namespace Dots
 			dot.column = column;
 			dot.row = row;
 			dot.transform.SetParent(transform);
-			dot.transform.position = CalculateCellPosition(column, row);
+			dot.transform.position = CalculateCellPosition(column, row + 6);
+			dot.FallToPosition(CalculateCellPosition(column, row), 0.4f + row * 0.08f);
 			// Declare event handlers so that we can properly unbind them later
 			//  (since we need to create a closure around the dot variable)
 			Action onSelectHandler = () => onSelectDot?.Invoke(dot);

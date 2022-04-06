@@ -11,6 +11,7 @@ namespace Dots
 		public Dot currentDot => dots.Count > 0 ? dots[dots.Count - 1] : null;
 		public Dot previousDot => dots.Count > 1 ? dots[dots.Count - 2] : null;
 		public int numDots => dots.Count;
+		public bool hasLoop => dots.Count > uniqueDots.Count;
 		public int colorIndex
 		{
 			get => _colorIndex;
@@ -82,11 +83,6 @@ namespace Dots
 					return true;
 			}
 			return false;
-		}
-
-		public bool HasLoop()
-		{
-			return dots.Count > uniqueDots.Count;
 		}
 
 		public void Clear()

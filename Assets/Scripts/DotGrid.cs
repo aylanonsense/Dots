@@ -8,15 +8,26 @@ namespace Dots
 	public class DotGrid : MonoBehaviour
 	{
 		[SerializeField] private PrefabPool dotPool;
-		[SerializeField] private int columns = 6;
-		[SerializeField] private int rows = 6;
-		[SerializeField] private float spacing = 2.2f;
+		public int columns = 6;
+		public int rows = 6;
+		public float spacing = 2.2f;
 
 		public event Action<Dot> onSelectDot;
 		public event Action<Dot> onHoverDotStart;
 		public event Action<Dot> onHoverDotEnd;
 
 		private DotEntry[,] dots;
+
+		public Dot GetDot(int column, int row)
+		{
+			return dots[column, row].dot;
+		}
+
+		public bool AreDotsAdjacent(Dot dot1, Dot dot2)
+		{
+			return (dot1.column == dot2.column && (dot1.row == dot2.row - 1 || dot1.row == dot2.row + 1)) ||
+				(dot1.row == dot2.row && (dot1.column == dot2.column - 1 || dot1.column == dot2.column + 1));
+		}
 
 		public void ApplyGravity()
 		{
@@ -60,31 +71,11 @@ namespace Dots
 			}
 		}
 
-		public bool AreDotsAdjacent(Dot dot1, Dot dot2)
-		{
-			return (dot1.column == dot2.column && (dot1.row == dot2.row - 1 || dot1.row == dot2.row + 1)) ||
-				(dot1.row == dot2.row && (dot1.column == dot2.column - 1 || dot1.column == dot2.column + 1));
-		}
-
 		public void ClearDots(IEnumerable<Dot> dots)
 		{
 			foreach (Dot dot in dots)
 			{
 				dot.Despawn();
-			}
-		}
-
-		public void ClearDotsOfColor(int colorIndex)
-		{
-			for (int column = 0; column < columns; column++)
-			{
-				for (int row = 0; row < rows; row++)
-				{
-					if (dots[column, row] != null && dots[column, row].dot.colorIndex == colorIndex)
-					{
-						dots[column, row].dot.Despawn();
-					}
-				}
 			}
 		}
 

@@ -66,6 +66,7 @@ namespace Dots
 			// If the player clicks a dot, start a new selection and add the dot to it
 			dotSelection.Clear();
 			dotSelection.AddDot(dot);
+			dot.Pulse();
 			dotSelection.colorIndex = dot.colorIndex;
 		}
 
@@ -81,17 +82,29 @@ namespace Dots
 			else if (dot.colorIndex == dotSelection.currentDot.colorIndex &&
 					dotGrid.AreDotsAdjacent(dot, dotSelection.currentDot) &&
 					!dotSelection.ContainsLink(dotSelection.currentDot, dot))
+			{
+				bool didHaveLoop = dotSelection.hasLoop;
 				dotSelection.AddDot(dot);
+				if (!didHaveLoop && dotSelection.hasLoop)
+					PulseDotsOfColor(dotSelection.colorIndex);
+				else
+					dot.Pulse();
+			}
 		}
 
 		private void ClearSelectedDots()
 		{
 			// Our selection contains a loop, so clear all dots of the same color in the grid
-			if (dotSelection.HasLoop())
-				dotGrid.ClearDotsOfColor(dotSelection.colorIndex);
+			if (dotSelection.hasLoop)
+			{
+				DespawnDotsOfColor(dotSelection.colorIndex);
+			}
 			// Just clear the selected dots
 			else
-				dotGrid.ClearDots(dotSelection.uniqueDots);
+			{
+				foreach (Dot dot in dotSelection.uniqueDots)
+					dot.Despawn();
+			}
 			dotSelection.Clear();
 			dotGrid.ApplyGravity();
 			dotGrid.FillWithDots();
@@ -105,6 +118,32 @@ namespace Dots
 		private void DeselectDots()
 		{
 			dotSelection.Clear();
+		}
+
+		private void PulseDotsOfColor(int colorIndex)
+		{
+			for (int column = 0; column < dotGrid.columns; column++)
+			{
+				for (int row = 0; row < dotGrid.rows; row++)
+				{
+					Dot dot = dotGrid.GetDot(column, row);
+					if (dot != null && dot.colorIndex == dotSelection.colorIndex)
+						dot.Pulse();
+				}
+			}
+		}
+
+		private void DespawnDotsOfColor(int colorIndex)
+		{
+			for (int column = 0; column < dotGrid.columns; column++)
+			{
+				for (int row = 0; row < dotGrid.rows; row++)
+				{
+					Dot dot = dotGrid.GetDot(column, row);
+					if (dot != null && dot.colorIndex == dotSelection.colorIndex)
+						dot.Despawn();
+				}
+			}
 		}
 	}
 }

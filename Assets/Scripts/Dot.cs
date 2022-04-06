@@ -3,9 +3,12 @@ using UnityEngine;
 
 namespace Dots
 {
+	[RequireComponent(typeof(Animator))]
 	[RequireComponent(typeof(PoolableObject))]
 	public class Dot : MonoBehaviour
 	{
+		private static readonly int PulseHash = Animator.StringToHash("Pulse");
+
 		[HideInInspector] public DotGrid grid;
 		[HideInInspector] public int column;
 		[HideInInspector] public int row;
@@ -16,6 +19,7 @@ namespace Dots
 			{
 				_colorIndex = value;
 				sprite.color = GameManager.I.dotColors[_colorIndex];
+				pulseSprite.color = GameManager.I.dotColors[_colorIndex];
 			}
 		}
 
@@ -24,10 +28,17 @@ namespace Dots
 		public event Action onHoverEnd;
 		public event Action onDespawn;
 
+		private Animator animator;
 		private PoolableObject poolable;
 
 		[SerializeField] private SpriteRenderer sprite;
+		[SerializeField] private SpriteRenderer pulseSprite;
 		private int _colorIndex;
+
+		public void Pulse()
+		{
+			animator.SetTrigger(PulseHash);
+		}
 
 		public void Despawn()
 		{
@@ -38,6 +49,7 @@ namespace Dots
 
 		private void Awake()
 		{
+			animator = GetComponent<Animator>();
 			poolable = GetComponent<PoolableObject>();
 		}
 

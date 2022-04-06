@@ -79,31 +79,7 @@ namespace Dots
 			}
 		}
 
-		private void Awake()
-		{
-			dots = new DotEntry[columns, rows];
-		}
-
-		private void Start()
-		{
-			for (int column = 0; column < columns; column++)
-			{
-				for (int row = 0; row < rows; row++)
-				{
-					SpawnAndAddDotToGrid(column, row);
-				}
-			}
-		}
-
-		private Dot SpawnAndAddDotToGrid(int column, int row)
-		{
-			Dot dot = dotPool.Spawn<Dot>();
-			dot.colorIndex = Random.Range(0, GameManager.I.dotColors.Length);
-			AddDotToGrid(dot, column, row);
-			return dot;
-		}
-
-		private void AddDotToGrid(Dot dot, int column, int row)
+		public void AddDotToGrid(Dot dot, int column, int row)
 		{
 			dot.grid = this;
 			dot.column = column;
@@ -132,7 +108,7 @@ namespace Dots
 			};
 		}
 
-		private void RemoveDotFromGrid(Dot dot)
+		public void RemoveDotFromGrid(Dot dot)
 		{
 			// Unbind events
 			DotEntry handlers = dots[dot.column, dot.row];
@@ -145,6 +121,30 @@ namespace Dots
 			dot.grid = null;
 			dot.column = -1;
 			dot.row = -1;
+		}
+
+		private void Awake()
+		{
+			dots = new DotEntry[columns, rows];
+		}
+
+		private void Start()
+		{
+			for (int column = 0; column < columns; column++)
+			{
+				for (int row = 0; row < rows; row++)
+				{
+					SpawnAndAddDotToGrid(column, row);
+				}
+			}
+		}
+
+		private Dot SpawnAndAddDotToGrid(int column, int row)
+		{
+			Dot dot = dotPool.Spawn<Dot>();
+			dot.colorIndex = Random.Range(0, GameManager.I.dotColors.Length);
+			AddDotToGrid(dot, column, row);
+			return dot;
 		}
 
 		private Vector2 CalculateCellPosition(int column, int row)

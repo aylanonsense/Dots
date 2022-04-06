@@ -111,7 +111,10 @@ namespace Dots
 			else
 			{
 				foreach (Dot dot in dotSelection.uniqueDots)
-					dot.Despawn();
+				{
+					dotGrid.RemoveDotFromGrid(dot);
+					dot.ShrinkAndDespawn();
+				}
 			}
 			background.color = Color.white;
 			dotSelection.Clear();
@@ -153,7 +156,10 @@ namespace Dots
 				{
 					Dot dot = dotGrid.GetDot(column, row);
 					if (dot != null && dot.colorIndex == dotSelection.colorIndex)
-						dot.Despawn();
+					{
+						dotGrid.RemoveDotFromGrid(dot);
+						dot.ShrinkAndDespawn();
+					}
 				}
 			}
 		}

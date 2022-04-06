@@ -8,6 +8,7 @@ namespace Dots
 	public class Dot : MonoBehaviour
 	{
 		private static readonly int PulseHash = Animator.StringToHash("Pulse");
+		private static readonly int ShrinkHash = Animator.StringToHash("Shrink");
 
 		[HideInInspector] public DotGrid grid;
 		[HideInInspector] public int column;
@@ -38,6 +39,11 @@ namespace Dots
 		public void Pulse()
 		{
 			animator.SetTrigger(PulseHash);
+		}
+
+		public void ShrinkAndDespawn()
+		{
+			animator.SetTrigger(ShrinkHash);
 		}
 
 		public void Despawn()
